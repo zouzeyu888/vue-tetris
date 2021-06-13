@@ -6,6 +6,7 @@
     <div id="box">
         <button @click="left" id="left">左移</button>
         <button @click="right" id="right">右移</button>
+        <button @click="down" id="down">下移</button>
         <button @click="changeShape" id="change">变形</button>
         <button @click="rotateShape" id="rotateShape">旋转</button>
     </div>
@@ -54,14 +55,30 @@ export default {
             }
             this.board[i] = row
         }
-        /* this.board[0][0] = 1
-        this.board[1][0] = 1
-        this.board[1][1] = 1
-        this.board[1][2] = 1
-        console.log(this.board) */
     },
     methods: {
         
+        // 验证边界
+        validate (col, row, shape) {
+            // console.log(col, row, shape)
+            for (let i = 0; i < 4; i++) {
+                let binaryStr = parseInt(shape[i], 16).toString(2)
+                if (binaryStr.length < 4) {
+                    binaryStr = Array(4 - binaryStr.length).fill(0).join('') + binaryStr
+                }
+                for (let j = 0; j < binaryStr.length; j++) {
+                    if (parseInt(binaryStr[j]) === 1) {
+                        if (row + j < 0 || row + j > 9) {                         
+                            return false
+                        }
+                        if (col + i < 0 || col + i > 19) {
+                            return false
+                        }
+                    }
+                }
+            }
+        },
+
         // 组件化 响应式
         draw (col, row, shape, type) {
             for (let i = 0; i < 4; i++) {
@@ -108,26 +125,40 @@ export default {
         rotateShape () {
             this.currentCol = (this.currentCol + 1) % this.shapes[this.currentRow].length
             let currentShape = this.shapes[this.currentRow][this.currentCol]
-            this.drawShape(currentShape)
+            if (this.validate(this.currentY, this.currentX, currentShape) !== false) {
+                this.drawShape(currentShape)
+            }
            /*  console.log(this.board) */
         },   
         // 左移
         left () {
-            let shape = this.shapes[this.currentRow][this.currentCol]
-            this.draw(this.currentY, this.currentX, shape, 0)
-            this.currentX = (this.currentX + 1) % 7
-            // console.log(this.currentX)
-            this.draw(this.currentY, this.currentX, shape, 1)
+            let currentShape = this.shapes[this.currentRow][this.currentCol]
+           if (this.validate(this.currentY, this.currentX - 1, currentShape) !== false) {
+               this.draw(this.currentY, this.currentX, currentShape, 0)
+               this.currentX--
+               console.log()
+               this.draw(this.currentY, this.currentX, currentShape, 1)
+           }  
         },
         // 右移
         right () {
-           let shape = this.shapes[this.currentRow][this.currentCol]
-            this.draw(this.currentY, this.currentX, shape, 0)
-            this.currentX = (this.currentX + 1) % 7
-            // console.log(this.currentX)
-            this.draw(this.currentY, this.currentX, shape, 1)
-        }
+           let currentShape = this.shapes[this.currentRow][this.currentCol]
+           if (this.validate(this.currentY, this.currentX + 1, currentShape) !== false) {
+               this.draw(this.currentY, this.currentX, currentShape, 0)
+               this.currentX++
+               this.draw(this.currentY, this.currentX, currentShape, 1)
+           }           
+        },
 
+        // 下移
+        down () {
+            let currentShape = this.shapes[this.currentRow][this.currentCol]
+            if (this.validate(this.currentY + 1, this.currentX, currentShape) !== false) {
+                this.draw(this.currentY, this.currentX, currentShape, 0)
+                this.currentY++
+                this.draw(this.currentY, this.currentX, currentShape, 1)
+            }           
+        }
 
     }
 }
@@ -157,6 +188,13 @@ export default {
     position: absolute;
     top: 30px;
     left: 10px;
+}
+
+/* 下移 */
+#down {
+    position: absolute;
+    top: 30px;
+    left: 50px;
 }
 
 /* 变形 */
