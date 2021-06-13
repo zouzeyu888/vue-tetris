@@ -5,6 +5,7 @@
     </div>
     <div id="box">
         <button @click="left" id="left">左移</button>
+        <button @click="right" id="right">右移</button>
         <button @click="changeShape" id="change">变形</button>
         <button @click="rotateShape" id="rotateShape">旋转</button>
     </div>
@@ -20,7 +21,8 @@ export default {
     data () {
         return {
             board: Array(20),
-            current: 0,
+            currentX: 0,
+            currentY: 0,
             currentRow: 0,
             currentCol: 0,
             shapes: [ /* O I L Z S J T */
@@ -59,21 +61,22 @@ export default {
         console.log(this.board) */
     },
     methods: {
-        left () {
-            this.draw(0)
-            this.current++
-            if (this.current > 7) {
-                this.current = 0
-            }
-            this.draw(1)
-        },
+        
         // 组件化 响应式
-        draw (type) {
-            this.board[0][this.current] = type
-            this.board[1][this.current] = type
-            this.board[1][this.current + 1] = type
-            this.board[1][this.current + 2] = type
-            this.board = this.board.slice()
+        draw (col, row, shape, type) {
+            for (let i = 0; i < 4; i++) {
+                let binaryStr = parseInt(shape[i], 16).toString(2)
+                if (binaryStr.length < 4) {
+                    binaryStr = Array(4 - binaryStr.length).fill(0).join('') + binaryStr
+                }
+                for (let j = 0; j < binaryStr.length; j++) {
+                    if (parseInt(binaryStr[j]) === 1) {
+                        this.board[col + i][row + j] = type
+                        this.board = this.board.slice()
+                    }
+                }
+            }
+           // console.log(shape) 
         },
 
     
@@ -86,10 +89,11 @@ export default {
                     binaryStr = Array(4 - binaryStr.length).fill(0).join('') + binaryStr
                 }
                 for (let j = 0; j < binaryStr.length; j++) {
-                    this.board[i][j] = parseInt(binaryStr[j]) 
+                    this.board[this.currentY + i][this.currentX + j] = parseInt(binaryStr[j])
                     this.board = this.board.slice()
                 }
             }
+            
             /* console.log(this.board) */
         },
 
@@ -99,15 +103,31 @@ export default {
             this.currentRow = (this.currentRow + 1) % this.shapes.length
             let currentShape = this.shapes[this.currentRow][this.currentCol]
             this.drawShape(currentShape)       
-            console.log(currentShape, 1)
         },
         // 旋转
         rotateShape () {
             this.currentCol = (this.currentCol + 1) % this.shapes[this.currentRow].length
             let currentShape = this.shapes[this.currentRow][this.currentCol]
             this.drawShape(currentShape)
-            console.log(currentShape, 2)
+           /*  console.log(this.board) */
+        },   
+        // 左移
+        left () {
+            let shape = this.shapes[this.currentRow][this.currentCol]
+            this.draw(this.currentY, this.currentX, shape, 0)
+            this.currentX = (this.currentX + 1) % 7
+            // console.log(this.currentX)
+            this.draw(this.currentY, this.currentX, shape, 1)
+        },
+        // 右移
+        right () {
+           let shape = this.shapes[this.currentRow][this.currentCol]
+            this.draw(this.currentY, this.currentX, shape, 0)
+            this.currentX = (this.currentX + 1) % 7
+            // console.log(this.currentX)
+            this.draw(this.currentY, this.currentX, shape, 1)
         }
+
 
     }
 }
@@ -129,6 +149,13 @@ export default {
 /* 左移 */
 #left {
     position: absolute;
+    left: 10px;
+}
+
+/* 右移 */
+#right {
+    position: absolute;
+    top: 30px;
     left: 10px;
 }
 
