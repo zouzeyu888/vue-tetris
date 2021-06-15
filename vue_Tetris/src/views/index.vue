@@ -148,6 +148,8 @@ export default {
             let currentShape = this.shapes[this.currentRow][this.currentCol]
             if (this.validate(this.currentY, this.currentX, currentShape) !== false) {
                 this.drawShape(currentShape)
+            } else {
+                this.currentCol = (this.currentCol - 1) % this.shapes[this.currentRow].length
             }
            /*  console.log(this.board) */
         },   
