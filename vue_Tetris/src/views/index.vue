@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="i in 20" :key="i" class="row">
-      <square v-for="j in 10" :key="j" :green="board[i - 1][j - 1]"></square>
+      <square v-for="j in 10" :key="j" :green="board[i - 1][j - 1].color"></square>
     </div>
     <div id="box">
         <button @click="left" id="left">左移</button>
@@ -51,12 +51,29 @@ export default {
             let row = []
             // eslint-disable-next-line keyword-spacing
             for(let j = 0; j < 10; j++) {
-                row.push(0)
+                row.push({
+                    status: 0,
+                    color: 0
+                })
             }
             this.board[i] = row
         }
     },
     methods: {
+        // 更新状态
+        update (col, row, shape) {
+            for (let i = 0; i < 4; i++) {
+                let binaryStr = parseInt(shape[i], 16).toString(2)
+                if (binaryStr.length < 4) {
+                    binaryStr = Array(4 - binaryStr.length).fill(0).join('') + binaryStr
+                }
+               for (let j = 0; j < binaryStr.length; j++) {
+                   if (parseInt(binaryStr[j]) === 1) {
+                       this.board[col + i][row + j].status = 1
+                   }
+               } 
+            }            
+        },
         
         // 验证边界
         validate (col, row, shape) {
@@ -72,6 +89,10 @@ export default {
                             return false
                         }
                         if (col + i < 0 || col + i > 19) {
+                            console.log(this.board)
+                            return false
+                        } 
+                        if (this.board[col + i][row + j].status === 1) {
                             return false
                         }
                     }
@@ -88,7 +109,7 @@ export default {
                 }
                 for (let j = 0; j < binaryStr.length; j++) {
                     if (parseInt(binaryStr[j]) === 1) {
-                        this.board[col + i][row + j] = type
+                        this.board[col + i][row + j].color = type
                         this.board = this.board.slice()
                     }
                 }
@@ -106,7 +127,7 @@ export default {
                     binaryStr = Array(4 - binaryStr.length).fill(0).join('') + binaryStr
                 }
                 for (let j = 0; j < binaryStr.length; j++) {
-                    this.board[this.currentY + i][this.currentX + j] = parseInt(binaryStr[j])
+                    this.board[this.currentY + i][this.currentX + j].color = parseInt(binaryStr[j])
                     this.board = this.board.slice()
                 }
             }
@@ -157,9 +178,14 @@ export default {
                 this.draw(this.currentY, this.currentX, currentShape, 0)
                 this.currentY++
                 this.draw(this.currentY, this.currentX, currentShape, 1)
-            }           
+            } else {
+                this.update(this.currentY, this.currentX, currentShape)
+                this.currentY = 0
+                this.currentX = 0
+                this.currentRow++
+                this.currentCol = 0
+            }    
         }
-
     }
 }
 </script>
