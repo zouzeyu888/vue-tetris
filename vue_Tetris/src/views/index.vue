@@ -4,8 +4,8 @@
       <square v-for="j in 10" :key="j" :green="board[i - 1][j - 1].color"></square>
     </div>
     <div id="box">
-        <button @click="left" id="left">左移</button>
-        <button @click="right" id="right">右移</button>
+        <button @click="left" id="left" @keyup.left="left">左移</button>
+        <button @click="right" id="right" @keyup.right="right">右移</button>
         <button @click="down" id="down">下移</button>
         <button @click="changeShape" id="change">变形</button>
         <button @click="rotateShape" id="rotateShape">旋转</button>
@@ -26,6 +26,7 @@ export default {
             currentY: 0,
             currentRow: 0,
             currentCol: 0,
+            currentKeyCode: 0,
             shapes: [ /* O I L Z S J T */
                     /* shapeO */
                     ['CC00', 'CC00', 'CC00', 'CC00'],
@@ -58,8 +59,26 @@ export default {
             }
             this.board[i] = row
         }
+        let _that = this
+        document.onkeydown = function (e) {
+            let key = window.event.keyCode
+            if (key === 37) {
+                _that.left()
+            }
+            if (key === 38) {
+                _that.rotateShape()
+            }
+            if (key === 39) {
+                _that.right()
+            }
+            if (key === 40) {
+                _that.down()
+            }
+        }
     },
+
     methods: {
+       
         // 更新状态
         update (col, row, shape) {
             for (let i = 0; i < 4; i++) {
@@ -72,9 +91,8 @@ export default {
                        this.board[col + i][row + j].status = 1
                    }
                } 
-            }            
+            }
         },
-        
         // 验证边界
         validate (col, row, shape) {
             // console.log(col, row, shape)
@@ -153,6 +171,7 @@ export default {
             }
            /*  console.log(this.board) */
         },   
+        
         // 左移
         left () {
             let currentShape = this.shapes[this.currentRow][this.currentCol]
@@ -182,12 +201,36 @@ export default {
                 this.draw(this.currentY, this.currentX, currentShape, 1)
             } else {
                 this.update(this.currentY, this.currentX, currentShape)
+                for (let i = this.board.length - 1; i >= 0; i--) {
+                    let flag = true 
+                    for (let j = 0; j < this.board[i].length; j++) {
+                        if (this.board[i][j].status === 0) {
+                            flag = false
+                            break
+                        }                      
+                    }
+                    if (flag) {
+                        let row = []
+                        this.board.splice(i, 1)
+                        for (let i = 0; i < 10; i++) {
+                            row.push({
+                                status: 0,
+                                color: 0
+                            })
+                        }
+                        this.board.unshift(row)
+                        i++
+                    }
+                }
                 this.currentY = 0
                 this.currentX = 0
-                this.currentRow++
+                this.currentRow = (this.currentRow + 1) % this.shapes.length
                 this.currentCol = 0
             }    
         }
+        
+        
+       
     }
 }
 </script>
