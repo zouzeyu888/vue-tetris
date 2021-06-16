@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="i in 20" :key="i" class="row">
-      <square v-for="j in 10" :key="j" :green="board[i - 1][j - 1].color"></square>
+      <square v-for="j in 10" :key="j" :green="board[i - 1][j - 1].color" :currentColor="currentRow"></square>
     </div>
     <div id="box">
         <button @click="left" id="left" @keyup.left="left">左移</button>
@@ -26,6 +26,9 @@ export default {
             currentY: 0,
             currentRow: 0,
             currentCol: 0,
+            current: {
+
+            },
             currentKeyCode: 0,
             shapes: [ /* O I L Z S J T */
                     /* shapeO */
