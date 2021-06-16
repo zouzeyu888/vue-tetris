@@ -24,11 +24,9 @@ export default {
             board: Array(20),
             currentX: 0,
             currentY: 0,
+            nextShape: parseInt(Math.random(0, 1) * 6),
             currentRow: 0,
             currentCol: 0,
-            current: {
-
-            },
             currentKeyCode: 0,
             shapes: [ /* O I L Z S J T */
                     /* shapeO */
@@ -77,11 +75,13 @@ export default {
             if (key === 40) {
                 _that.down()
             }
-        }
+        }    
     },
-
+    mounted () {
+        this.down()
+        setInterval(this.down, 800)
+    },
     methods: {
-       
         // 更新状态
         update (col, row, shape) {
             for (let i = 0; i < 4; i++) {
@@ -159,9 +159,10 @@ export default {
         // 下一个图形
         changeShape () {
             this.currentCol = 0
-            this.currentRow = (this.currentRow + 1) % this.shapes.length
             let currentShape = this.shapes[this.currentRow][this.currentCol]
-            this.drawShape(currentShape)       
+            this.currentRow = (this.currentRow + 1) % this.shapes.length
+            console.log(this.currentRow)
+            this.drawShape(currentShape)
         },
         // 旋转
         rotateShape () {
@@ -228,10 +229,46 @@ export default {
                 this.currentY = 0
                 this.currentX = 0
                 this.currentRow = (this.currentRow + 1) % this.shapes.length
+
+                this.currentCol = 0
+            }    
+        },
+        // 自动向下走
+        autoDown () {
+            let currentShape = this.shapes[this.currentRow][this.currentCol]
+            if (this.validate(this.currentY + 1, this.currentX, currentShape) !== false) {
+                this.draw(this.currentY, this.currentX, currentShape, 0)
+                this.currentY++
+                this.draw(this.currentY, this.currentX, currentShape, 1)
+            } else {
+                this.update(this.currentY, this.currentX, currentShape)
+                for (let i = this.board.length - 1; i >= 0; i--) {
+                    let flag = true 
+                    for (let j = 0; j < this.board[i].length; j++) {
+                        if (this.board[i][j].status === 0) {
+                            flag = false
+                            break
+                        }                      
+                    }
+                    if (flag) {
+                        let row = []
+                        this.board.splice(i, 1)
+                        for (let i = 0; i < 10; i++) {
+                            row.push({
+                                status: 0,
+                                color: 0
+                            })
+                        }
+                        this.board.unshift(row)
+                        i++
+                    }
+                }
+                this.currentY = 0
+                this.currentX = 0
+                this.currentRow = (this.currentRow + 1) % this.shapes.length
                 this.currentCol = 0
             }    
         }
-        
         
        
     }

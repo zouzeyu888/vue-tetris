@@ -1,5 +1,5 @@
 <template>
-    <span class="square" :class="green == 1 ? color(currentColor) : ''">
+    <span class="square" :class="green == 1 ? 'green' : ''">
         
     </span>
 </template>
@@ -10,22 +10,20 @@ export default {
        color (currentColor) {
            /* ["red", "yellow", "blue", "green", "purple", "orange" ,"#fff"] */
            switch (currentColor) {
-                case 1:
+                case 0:
                    return 'red' 
-                case 2:
+                case 1:
                    return 'yellow'
-                case 3:
+                case 2:
                     return 'blue'
-                case 4:
+                case 3:
                     return 'green'
-                case 5:
+                case 4:
                     return 'purple'
-                case 6:
+                case 5:
                     return 'orange'
-                case 7:
+                case 6:
                     return 'white'
-                default:
-                    return false
            }
        }
     }
@@ -39,7 +37,7 @@ export default {
 
 /* ["red", "yellow", "blue", "green", "purple", "orange" ,"#fff"] */
 .red.square {
-    background-color:red
+    color:red
 }
 
 .yellow.square {
@@ -63,7 +61,7 @@ export default {
 }
 
 .white.square {
-    background-color: #fff;
+    background-color: white;
 }
 
 .square {
