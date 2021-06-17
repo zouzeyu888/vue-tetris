@@ -78,8 +78,8 @@ export default {
         }    
     },
     mounted () {
-        this.down()
-        setInterval(this.down, 800)
+        /* this.down()
+        setInterval(this.down, 800) */
     },
     methods: {
         // 更新状态
@@ -137,42 +137,41 @@ export default {
             }
            // console.log(shape) 
         },
-
-    
-
         // 画一个形状
-        drawShape (shape) {
+        drawShape (col, row, shape, type) {
             for (let i = 0; i < 4; i++) {
                 let binaryStr = parseInt(shape[i], 16).toString(2)
                 if (binaryStr.length < 4) {
                     binaryStr = Array(4 - binaryStr.length).fill(0).join('') + binaryStr
                 }
                 for (let j = 0; j < binaryStr.length; j++) {
-                    this.board[this.currentY + i][this.currentX + j].color = parseInt(binaryStr[j])
-                    this.board = this.board.slice()
+                   /*  console.log(this.currentY + i, this.currentX + j) */
+                   if (parseInt(binaryStr[j]) === 1) {
+                       this.board[col + i][row + j].color = type
+                   }  
                 }
             }
-            
-            /* console.log(this.board) */
+            this.board = this.board.slice()
         },
-
         // 下一个图形
         changeShape () {
             this.currentCol = 0
+            let x = (this.currentRow + 1) % this.shapes.length
             let currentShape = this.shapes[this.currentRow][this.currentCol]
-            this.currentRow = (this.currentRow + 1) % this.shapes.length
+            this.drawShape(this.currentY, this.currentX, currentShape, this.currentRow)
+            this.currentRow = x
             console.log(this.currentRow)
-            this.drawShape(currentShape)
+            this.draw(this.currentY, this.currentX, currentShape, this.currentRow)
         },
         // 旋转
         rotateShape () {
-            this.currentCol = (this.currentCol + 1) % this.shapes[this.currentRow].length
             let currentShape = this.shapes[this.currentRow][this.currentCol]
             if (this.validate(this.currentY, this.currentX, currentShape) !== false) {
-                this.drawShape(currentShape)
-            } else {
-                this.currentCol = (this.currentCol - 1) % this.shapes[this.currentRow].length
-            }
+                this.drawShape(this.currentCol, this.currentRow, currentShape, 0)
+                this.currentCol = (this.currentCol + 1) % this.shapes[this.currentRow].length
+                this.drawShape(this.currentCol, this.currentRow, currentShape, this.currentRow)
+            } 
+             console.log(this.currentCol)
            /*  console.log(this.board) */
         },   
         
@@ -182,8 +181,7 @@ export default {
            if (this.validate(this.currentY, this.currentX - 1, currentShape) !== false) {
                this.draw(this.currentY, this.currentX, currentShape, 0)
                this.currentX--
-               console.log()
-               this.draw(this.currentY, this.currentX, currentShape, 1)
+               this.draw(this.currentY, this.currentX, currentShape, this.currentRow)
            }  
         },
         // 右移
@@ -192,7 +190,7 @@ export default {
            if (this.validate(this.currentY, this.currentX + 1, currentShape) !== false) {
                this.draw(this.currentY, this.currentX, currentShape, 0)
                this.currentX++
-               this.draw(this.currentY, this.currentX, currentShape, 1)
+               this.draw(this.currentY, this.currentX, currentShape, this.currentRow)
            }           
         },
 
@@ -202,7 +200,7 @@ export default {
             if (this.validate(this.currentY + 1, this.currentX, currentShape) !== false) {
                 this.draw(this.currentY, this.currentX, currentShape, 0)
                 this.currentY++
-                this.draw(this.currentY, this.currentX, currentShape, 1)
+                this.draw(this.currentY, this.currentX, currentShape, this.currentRow)
             } else {
                 this.update(this.currentY, this.currentX, currentShape)
                 for (let i = this.board.length - 1; i >= 0; i--) {

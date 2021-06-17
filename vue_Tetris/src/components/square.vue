@@ -1,5 +1,5 @@
 <template>
-    <span class="square" :class="green == 1 ? 'green' : ''">
+    <span class="square" :class="green > 0 ? color(green) : ''">
         
     </span>
 </template>
