@@ -1,6 +1,6 @@
 <template>
     <span class="square" :class="green > 0 ? color(green) : ''">
-        <p>{{green}}</p>
+      <!--   <p>{{green}}</p> -->
     </span>
 </template>
 <script>

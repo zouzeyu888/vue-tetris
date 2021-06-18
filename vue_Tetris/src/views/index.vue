@@ -3,13 +3,13 @@
     <div v-for="i in 20" :key="i" class="row">
       <square v-for="j in 10" :key="j" :green="board[i - 1][j - 1].color" :currentColor="currentRow"></square>
     </div>
-    <div id="box">
+    <!-- <div id="box">
         <button @click="left" id="left" @keyup.left="left">左移</button>
         <button @click="right" id="right" @keyup.right="right">右移</button>
         <button @click="down" id="down">下移</button>
         <button @click="changeShape" id="change">变形</button>
         <button @click="rotateShape" id="rotateShape">旋转</button>
-    </div>
+    </div> -->
     
   </div>
 </template>
@@ -230,6 +230,7 @@ export default {
                         for (let j = 0; j < this.board[i].length; j++) {
                              if (this.board[i][j].status === 1) {
                                  alert('game over')
+                                 location.reload()
                              }
                         }
                     }
