@@ -76,7 +76,8 @@ export default {
             if (key === 40) {
                 _that.down()
             }
-        }    
+        }
+        _that.changeShape()
     },
     mounted () {
         /* this.down()
@@ -160,9 +161,10 @@ export default {
             // let currentShape = this.shapes[this.currentRow - 1][this.currentCol]
             this.drawShape(this.currentY, this.currentX, this.shapes[this.currentRow][this.currentCol], 0)
             /* console.log(this.currentRow) */
-            this.currentRow = (this.currentRow + 1) % this.shapes.length
+            this.currentRow = parseInt(Math.random(0, 1) * 8)
+            console.log(this.currentRow)
             if (this.currentRow === 0) {
-                this.currentRow = 1
+                this.currentRow = parseInt(Math.random(0, 1) * 8)
             }
             this.drawShape(this.currentY, this.currentX, this.shapes[this.currentRow][this.currentCol], this.currentRow)
         },
@@ -174,7 +176,6 @@ export default {
                 this.currentCol = (this.currentCol + 1) % this.shapes[this.currentRow].length
                 this.drawShape(this.currentY, this.currentX, this.shapes[this.currentRow][this.currentCol], this.currentRow)
             } 
-             console.log(this.currentCol)
         },   
         
         // 左移
@@ -225,57 +226,24 @@ export default {
                         this.board.unshift(row)
                         i++
                     }
+                    if (i === 0) {
+                        for (let j = 0; j < this.board[i].length; j++) {
+                             if (this.board[i][j].status === 1) {
+                                 alert('game over')
+                             }
+                        }
+                    }
                 }
                 this.currentY = 0
                 this.currentX = 0
-                this.currentRow = (this.currentRow + 1) % this.shapes.length
-                /* console.log(this.currentRow) */
+                this.currentRow = (parseInt(Math.random(0, 1) * 8) + parseInt(Math.random(0.2, 1) * 8)) % 8              
                 if (this.currentRow === 0) {
-                    this.currentRow = 1
+                    this.currentRow = (parseInt(Math.random(0, 1) * 8) + parseInt(Math.random(0.2, 1) * 8)) % 8
                 }
+                console.log(this.currentRow)
                 this.currentCol = 0
             }    
         }
-        // 自动向下走
-        /* autoDown () {
-            let currentShape = this.shapes[this.currentRow][this.currentCol]
-            if (this.validate(this.currentY + 1, this.currentX, currentShape) !== false) {
-                this.draw(this.currentY, this.currentX, currentShape, 0)
-                this.currentY++
-                this.draw(this.currentY, this.currentX, currentShape, 1)
-            }  else {
-                this.update(this.currentY, this.currentX, currentShape)
-                for (let i = this.board.length - 1; i >= 0; i--) {
-                    let flag = true 
-                    for (let j = 0; j < this.board[i].length; j++) {
-                        if (this.board[i][j].status === 0) {
-                            flag = false
-                            break
-                        }                      
-                    }
-                    if (flag) {
-                        let row = []
-                        this.board.splice(i, 1)
-                        for (let i = 0; i < 10; i++) {
-                            row.push({
-                                status: 0,
-                                color: 0
-                            })
-                        }
-                        this.board.unshift(row)
-                        i++
-                    }
-                }
-                this.currentY = 0
-                this.currentX = 0
-                this.currentRow = (this.currentRow + 1) % this.shapes.length
-                console.log(this.currentRow)
-                if (this.currentRow === 0) {
-                    this.currentRow = 1
-                }
-                this.currentCol = 0  
-            }    
-        }  */
     }
 }
 </script>
