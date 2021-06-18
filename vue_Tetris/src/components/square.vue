@@ -1,6 +1,6 @@
 <template>
     <span class="square" :class="green > 0 ? color(green) : ''">
-        
+        <p>{{green}}</p>
     </span>
 </template>
 <script>
@@ -10,19 +10,19 @@ export default {
        color (currentColor) {
            /* ["red", "yellow", "blue", "green", "purple", "orange" ,"#fff"] */
            switch (currentColor) {
-                case 0:
-                   return 'red' 
                 case 1:
-                   return 'yellow'
+                   return 'red' 
                 case 2:
-                    return 'blue'
+                   return 'yellow'
                 case 3:
-                    return 'green'
+                    return 'blue'
                 case 4:
-                    return 'purple'
+                    return 'green'
                 case 5:
-                    return 'orange'
+                    return 'purple'
                 case 6:
+                    return 'orange'
+                case 7:
                     return 'white'
            }
        }
@@ -37,7 +37,7 @@ export default {
 
 /* ["red", "yellow", "blue", "green", "purple", "orange" ,"#fff"] */
 .red.square {
-    color:red
+    background-color:red
 }
 
 .yellow.square {
